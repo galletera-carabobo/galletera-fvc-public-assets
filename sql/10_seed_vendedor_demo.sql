@@ -41,47 +41,58 @@ WHERE id IN (SELECT id FROM clients_to_assign);
 -- 3) Crear cupo del mes actual (Mayo 2026)
 INSERT INTO public.vendor_monthly_quotas (
   vendedor_id, year, month,
-  target_kg, target_usd,
-  target_soda_kg, target_maria_kg,
+  target_kg, target_amount,
+  target_kg_soda, target_kg_maria,
+  notes,
   created_at, updated_at
 ) VALUES (
   '161a5e10-e6c1-4c49-99f3-4aaa34f759ad',
   2026, 5,
   8000, 16000,
   3000, 2500,
+  'Cupo asignado para demo Sprint 03',
   NOW(), NOW()
 )
 ON CONFLICT (vendedor_id, year, month) DO UPDATE SET
   target_kg = EXCLUDED.target_kg,
-  target_usd = EXCLUDED.target_usd,
-  target_soda_kg = EXCLUDED.target_soda_kg,
-  target_maria_kg = EXCLUDED.target_maria_kg,
+  target_amount = EXCLUDED.target_amount,
+  target_kg_soda = EXCLUDED.target_kg_soda,
+  target_kg_maria = EXCLUDED.target_kg_maria,
+  notes = EXCLUDED.notes,
   updated_at = NOW();
 
--- 4) Verificación: ver lo que se hizo
+-- ============================================================================
+-- VERIFICACION
+-- ============================================================================
+
 SELECT 
-  'Profile creado' as accion,
+  '✅ Profile creado' as accion,
   full_name,
   zone,
-  role
+  role,
+  email
 FROM public.profiles
 WHERE id = '161a5e10-e6c1-4c49-99f3-4aaa34f759ad';
 
 SELECT 
-  'Clientes asignados' as accion,
+  '✅ Clientes asignados' as accion,
   COUNT(*) as cantidad
 FROM public.clients
 WHERE assigned_vendedor_id = '161a5e10-e6c1-4c49-99f3-4aaa34f759ad';
 
 SELECT 
-  'Cupo del mes' as accion,
-  year, month, target_kg, target_usd
+  '✅ Cupo del mes' as accion,
+  year, month, 
+  target_kg as meta_kg,
+  target_amount as meta_usd,
+  target_kg_soda as meta_soda,
+  target_kg_maria as meta_maria
 FROM public.vendor_monthly_quotas
 WHERE vendedor_id = '161a5e10-e6c1-4c49-99f3-4aaa34f759ad'
   AND year = 2026 AND month = 5;
 
 SELECT 
-  'Lista de clientes asignados' as info,
+  '📋 Clientes asignados:' as info,
   business_name,
   trade_name,
   city,
