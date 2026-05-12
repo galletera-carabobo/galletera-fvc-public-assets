@@ -22,10 +22,10 @@ SET role = 'admin',
     is_active = TRUE
 WHERE email = 'gustavogonzalez0112@gmail.com';
 
--- Promover a J. Partidas
+-- Promover a Jose Partidas (Gerente General)
 UPDATE public.profiles
 SET role = 'admin',
-    full_name = 'J. Partidas',
+    full_name = 'Jose Partidas',
     is_active = TRUE
 WHERE email = 'jpartidas@galletera-carabobo.com';
 
@@ -33,4 +33,9 @@ WHERE email = 'jpartidas@galletera-carabobo.com';
 SELECT id, email, full_name, role, is_active, created_at
 FROM public.profiles
 WHERE role = 'admin'
-ORDER BY full_name;
+ORDER BY 
+  CASE email
+    WHEN 'jpartidas@galletera-carabobo.com' THEN 1  -- Jose primero (gerente)
+    ELSE 2
+  END,
+  full_name;
